@@ -20,7 +20,9 @@ class FastaEntryView(APIView):
 
 	def post(self, request, *args, **kwargs):
 		fastas_serializer = FastaEntrySerializer(data=request.data)
+		#print(fastas_serializer)
 		if fastas_serializer.is_valid():
+			#import pdb; pdb.set_trace() Dejo para debaguear	
 			fastas_serializer.save()
 			return Response(fastas_serializer.data, status=status.HTTP_201_CREATED)
 		else:

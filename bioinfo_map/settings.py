@@ -133,4 +133,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploaded')
+ALIGNAMENT_ROOT = os.path.join(MEDIA_ROOT,'align')
 MEDIA_URl = '/files/'
