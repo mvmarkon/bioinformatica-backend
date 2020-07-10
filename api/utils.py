@@ -28,17 +28,17 @@ def readSequence(pathFasta):
                     result.message = "El archivo esta corrupto, encontramos dentro de las secuencias elementos que no son nucleótidos"
                     break
 # si detecto que dentro de la secuencia hay un '-' asumo que esta alineado. Con encontrar uno, ya no lo vuelvo a evaluar
-            if( not result.isAlign and "-" in sequence ):
-                result.isAlign = True
+                if( not result.isAlign and "-" in sequence ):
+                    result.isAlign = True
             
 # instancio un FastaSequence con su header y body respectivamente 
-            sequ = FastaSequence(name, sequence)
+                sequ = FastaSequence(name, sequence)
             # agrego el FastaSequence a la lista del FastaResult
-            result.sequences.append(sequ)
-            # print(sequ.header)
-            #print(sequ.body)
+                result.sequences.append(sequ)
+                print(sequ.header)
+                print(sequ.body)
 
-        # print(len(result.sequences))
+        print(len(result.sequences))
         # print("msg: " + result.message)
         # print(str(result))
         return result
@@ -81,7 +81,8 @@ def getID(header) :
 
 
 def is_valid_lon(lon):
-    lon_pat = "^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$"
+    lon_pat = '''^'(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))'$'''
+    import pdb; pdb.set_trace()
     res = re.match(lon, lon_pat)
     if res:
         return decimal.Decimal(res.group())
@@ -91,7 +92,8 @@ def is_valid_lon(lon):
  
  
 def is_valid_lat(lat):
-    lat_pat = "^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$"
+    lat_pat = "^'(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))'$"
+    import pdb; pdb.set_trace()
     res = re.match(lat, lat_pat)
     if res:
         return  decimal.Decimal(res.group())

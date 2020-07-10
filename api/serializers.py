@@ -8,11 +8,15 @@ from django.core.exceptions import ValidationError
 class FastaEntrySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-           
+   
         fastaNew = FastaEntry.objects.create(**validated_data['data'])
         #fastaNew = FastaEntry(nombre = validated_data[0] ,fasta_file =validated_data[1] )
         #fastaNew.save()
+        print(validated_data['sequences'])
+        print("llamado")
+        
         for seq in validated_data['sequences']:
+           import pdb; pdb.set_trace()
            nuevaSeq = Sequence(fasta = fastaNew  ,gb_id= getID(seq.header), 
 	        sequence = seq.body,
 	        latitude = getLatitud(seq.header),	
