@@ -1,15 +1,15 @@
-from Bio import SeqIO
+from Bio import SeqIO, AlignIO
 from Bio.Align.Applications import ClustalwCommandline
-from Bio import AlignIO
 from .fastaResult import FastaResult
-from .fastaSequence import FastaSequence 
-import os,decimal,re
+from .fastaSequence import FastaSequence
+import os
+import decimal
 from django.conf import settings
 
 def readSequence(pathFasta):
         valid_characters = ['-', 'A', 'C', 'G', 'T']
         fasta_sequences = SeqIO.parse(open(pathFasta), 'fasta')
-        result = FastaResult(False, True, 0, [], "OK","")
+        result = FastaResult(False, True, 0, [], "OK", "")
         with open(pathFasta) as out_file:
         # print(str(result.isValid))
             for fasta in fasta_sequences:
@@ -51,7 +51,7 @@ def generateAlignamient(pathFasta):
         if( not result.isAlign and result.isValid):
             cline = ClustalwCommandline("clustalw2", infile=pathFasta,outfile=outfilePath)
             cline()
-            result.alignroute = outfilePath    
+            result.alignroute = outfilePath
         elif ( result.isAlign and result.isValid):
                result.alignroute = pathFasta
         else:
@@ -81,22 +81,24 @@ def getID(header) :
 
 
 def is_valid_lon(lon):
-    lon_pat = '''^'(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))'$'''
-    import pdb; pdb.set_trace()
-    res = re.match(lon, lon_pat)
-    if res:
-        return decimal.Decimal(res.group())
-    else:
-        print("falllloooooo!!! LONGITUD {}".format(lon))
+    try:
+        londec = decimal.Decimal(lon)
+        if londec >= -180 and londec <= 180:
+            return londec
+        else:
+            return None
+    except Exception as e:
+        print("falllloooooo!!!LATITUD {} por: {}".format(lon, str(e)))
         return None
- 
- 
+
+
 def is_valid_lat(lat):
-    lat_pat = "^'(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))'$"
-    import pdb; pdb.set_trace()
-    res = re.match(lat, lat_pat)
-    if res:
-        return  decimal.Decimal(res.group())
-    else:
-        print("falllloooooo!!!LATITUD {}".format(lat))
-        return None    
+    try:
+        latdec = decimal.Decimal(lat)
+        if latdec >= -90 and latdec <= 90:
+            return latdec
+        else:
+            return None
+    except Exception as e:
+        print("falllloooooo!!!LATITUD {} por: {}".format(lat, str(e)))
+        return None
