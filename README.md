@@ -30,3 +30,8 @@
 	   python manage.py createsuperuser
 	- Iniciar el servidor(por default corre en el puerto 8000)
 		python manage.py runserver   
+
+
+## Instalacion Clustal
+- Descargar paquete para tu sistema operativa [Link](http://www.clustal.org/download/current/)
+- En el caso de linux correr el script ´install-sh´		

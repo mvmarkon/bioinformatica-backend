@@ -9,9 +9,10 @@ from django.conf import settings
 def readSequence(pathFasta):
         valid_characters = ['-', 'A', 'C', 'G', 'T']
         fasta_sequences = SeqIO.parse(open(pathFasta), 'fasta')
-        result = FastaResult(False, True, 0, [], "OK", "")
+        num = len([1 for line in open(pathFasta) if line.startswith(">")])
+        result = FastaResult(False,True, num, [], "OK","")
         with open(pathFasta) as out_file:
-        # print(str(result.isValid))
+            count_sequences=0
             for fasta in fasta_sequences:
                 name, sequence = fasta.id, str(fasta.seq)
 
@@ -22,23 +23,24 @@ def readSequence(pathFasta):
                 # con esto valido que todos los caracteres de la secuencia esten dentro de los permitidos, sino lo marco invalido
                     for char in sequence:
                         validSequence = validSequence and char in valid_characters
-            
+                count_sequences= count_sequences + 1  
                 if(not validSequence):
                     result.isValid = False
                     result.message = "El archivo esta corrupto, encontramos dentro de las secuencias elementos que no son nucleótidos"
                     break
-# si detecto que dentro de la secuencia hay un '-' asumo que esta alineado. Con encontrar uno, ya no lo vuelvo a evaluar
+                # si detecto que dentro de la secuencia hay un '-' asumo que esta alineado. Con encontrar uno, ya no lo vuelvo a evaluar
                 if( not result.isAlign and "-" in sequence ):
                     result.isAlign = True
             
-# instancio un FastaSequence con su header y body respectivamente 
+                 # instancio un FastaSequence con su header y body respectivamente 
                 sequ = FastaSequence(name, sequence)
-            # agrego el FastaSequence a la lista del FastaResult
+                 # agrego el FastaSequence a la lista del FastaResult
                 result.sequences.append(sequ)
                 print(sequ.header)
                 print(sequ.body)
-
-        print(len(result.sequences))
+        result.isValid= num == count_sequences
+        result.message = "No coincide la cantidad de headers con la secuencias que tiene el archivo"
+        print(result.isValid)
         # print("msg: " + result.message)
         # print(str(result))
         return result
@@ -86,6 +88,7 @@ def is_valid_lon(lon):
         if londec >= -180 and londec <= 180:
             return londec
         else:
+            print("Es correcto el formato,no esta entre los rangos solicitados")
             return None
     except Exception as e:
         print("falllloooooo!!!LATITUD {} por: {}".format(lon, str(e)))
@@ -98,6 +101,7 @@ def is_valid_lat(lat):
         if latdec >= -90 and latdec <= 90:
             return latdec
         else:
+            print("Es correcto el formato,no esta entre los rangos solicitados")
             return None
     except Exception as e:
         print("falllloooooo!!!LATITUD {} por: {}".format(lat, str(e)))
