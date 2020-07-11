@@ -38,8 +38,8 @@ def readSequence(pathFasta):
                 result.sequences.append(sequ)
                 print(sequ.header)
                 print(sequ.body)
-        result.isValid= num == count_sequences
-        result.message = "No coincide la cantidad de headers con la secuencias que tiene el archivo"
+        #result.isValid= num == count_sequences
+        #result.message = "No coincide la cantidad de headers con la secuencias que tiene el archivo"
         print(result.isValid)
         # print("msg: " + result.message)
         # print(str(result))
