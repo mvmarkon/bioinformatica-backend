@@ -3,9 +3,18 @@ from .models import FastaEntry, Sequence
 from .utils import *
 from django.core.files.storage import default_storage
 from django.core.exceptions import ValidationError
+from django.conf import settings
+
+
+class SequenceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Sequence
+        fields = '__all__'
 
 
 class FastaEntrySerializer(serializers.ModelSerializer):
+    sequences = SequenceSerializer(many=True, read_only=True)
 
     def create(self, validated_data):
    
@@ -16,7 +25,6 @@ class FastaEntrySerializer(serializers.ModelSerializer):
         print("llamado")
         
         for seq in validated_data['sequences']:
-           import pdb; pdb.set_trace()
            nuevaSeq = Sequence(fasta = fastaNew  ,gb_id= getID(seq.header), 
 	        sequence = seq.body,
 	        latitude = getLatitud(seq.header),	
@@ -49,11 +57,4 @@ class FastaEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FastaEntry
-        fields = '__all__'
-
-
-class SequenceSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Sequence
-        fields = '__all__'
+        fields = ['id', 'nombre', 'created', 'fasta_file', 'alignament_file', 'sequences']
