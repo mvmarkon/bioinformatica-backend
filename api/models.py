@@ -12,6 +12,7 @@ class FastaEntry(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	fasta_file = models.FileField(upload_to=get_fasta_path)
 	alignament_file = models.CharField(max_length=500, null=True, blank=True)
+	newick_tree = models.CharField(max_length=10000, null=True, blank=True)
 	
 	def __str__(self):
 		return self.nombre

@@ -43,7 +43,10 @@ class FastaEntrySerializer(serializers.ModelSerializer):
 
         result = generateAlignamient(tmp_file)
         if(result.isValid):
+            print(result)
+            print(result.newicktree)
             data['alignament_file']= result.alignroute
+            data['newick_tree'] = result.newicktree
             arrayResult ={ 
                 'data': data,
                 'sequences': result.sequences
@@ -57,4 +60,4 @@ class FastaEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FastaEntry
-        fields = ['id', 'nombre', 'created', 'fasta_file', 'alignament_file', 'sequences']
+        fields = ['id', 'nombre', 'created', 'fasta_file', 'alignament_file','newick_tree','sequences']

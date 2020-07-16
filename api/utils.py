@@ -2,15 +2,14 @@ from Bio import SeqIO, AlignIO
 from Bio.Align.Applications import ClustalwCommandline
 from .fastaResult import FastaResult
 from .fastaSequence import FastaSequence
-import os
-import decimal
+import os,decimal,subprocess
 from django.conf import settings
 
 def readSequence(pathFasta):
         valid_characters = ['-', 'A', 'C', 'G', 'T']
         fasta_sequences = SeqIO.parse(open(pathFasta), 'fasta')
         num = len([1 for line in open(pathFasta) if line.startswith(">")])
-        result = FastaResult(False,True, num, [], "OK","")
+        result = FastaResult(False,True, num, [], "OK","","")
         with open(pathFasta) as out_file:
             count_sequences=0
             for fasta in fasta_sequences:
@@ -54,10 +53,26 @@ def generateAlignamient(pathFasta):
             cline = ClustalwCommandline("clustalw2", infile=pathFasta,outfile=outfilePath)
             cline()
             result.alignroute = outfilePath
+            result.newicktree = generateTree(result.alignroute)
         elif ( result.isAlign and result.isValid):
                result.alignroute = pathFasta
+               result.newicktree = generateTree(result.alignroute)
         else:
              pass         
+        return result
+
+def generateTree(urlAlign):
+        print('entre')    
+        process = subprocess.Popen(['iqtree','-s',urlAlign,'-B','1000'],
+                        stdout=subprocess.PIPE, 
+                        stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        stdout, stderr
+        
+        treepath = os.path.splitext(urlAlign)[0]+".fasta.treefile"         
+        with open(treepath) as reader:
+            result = reader.read()
+        print(result)    
         return result
 
 def convertPathFastaTOAln(path):

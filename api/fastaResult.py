@@ -11,13 +11,14 @@ class FastaResult(object):
 
 
 
-    def __init__(self, isAlign, isValid, cantSymbols, sequences, message,alignroute):
+    def __init__(self, isAlign, isValid, cantSymbols, sequences, message,alignroute,newicktree):
         self.isAlign = isAlign
         self.isValid = isValid
         self.cantSymbols = cantSymbols
         self.sequences = sequences
         self.message = message
         self.alignroute = alignroute
+        self.newicktree = newicktree
 
     
     # def make_fastaResult(isAlign, isValid, cantSymbols, sequences):
