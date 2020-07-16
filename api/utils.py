@@ -47,7 +47,14 @@ def readSequence(pathFasta):
 
     
 def generateAlignamient(pathFasta):
-        outfilePath = os.path.join(settings.ALIGNAMENT_ROOT, pathFasta.split(sep='/')[8]) # Revisar si se puede mejorar esto        
+        # Hago un reverse del path,entonces no deberia importar cuantas subcarpetas haya antes
+        auxPath= pathFasta.split(sep='/')
+        auxPath.reverse()
+        print(auxPath[0])
+        outfilePath = os.path.join(settings.ALIGNAMENT_ROOT, auxPath[0])       
+        print('esto es lo que vale')
+        print(auxPath)
+        print(outfilePath)
         result = readSequence(pathFasta)
         if( not result.isAlign and result.isValid):
             cline = ClustalwCommandline("clustalw2", infile=pathFasta,outfile=outfilePath)
