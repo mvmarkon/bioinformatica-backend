@@ -40,7 +40,9 @@ def readSequence(pathFasta):
             if(count_sequences < 5):
                   result.isValid = False
                   result.message = "El archivo tiene {} secuencias y necesita al menos 5 para poder generar el arbol".format(str(count_sequences))
-                  
+            if(os.path.splitext(pathFasta)[1] != ".fasta"):  
+                result.isValid = False
+                result.message = "El archivo no es formato .fasta"      
         #result.isValid= num == count_sequences
         #result.message = "No coincide la cantidad de headers con la secuencias que tiene el archivo"
         print(result.isValid)
@@ -56,9 +58,7 @@ def generateAlignamient(pathFasta):
         auxPath.reverse()
         print(auxPath[0])
         outfilePath = os.path.join(settings.ALIGNAMENT_ROOT, auxPath[0])       
-        print('esto es lo que vale')
-        print(auxPath)
-        print(outfilePath)
+        
         result = readSequence(pathFasta)
         if( not result.isAlign and result.isValid):
             cline = ClustalwCommandline("clustalw2", infile=pathFasta,outfile=outfilePath)
