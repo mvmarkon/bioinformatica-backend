@@ -37,6 +37,10 @@ def readSequence(pathFasta):
                 result.sequences.append(sequ)
                 print(sequ.header)
                 print(sequ.body)
+            if(count_sequences < 5):
+                  result.isValid = False
+                  result.message = "El archivo tiene {} secuencias y necesita al menos 5 para poder generar el arbol".format(str(count_sequences))
+                  
         #result.isValid= num == count_sequences
         #result.message = "No coincide la cantidad de headers con la secuencias que tiene el archivo"
         print(result.isValid)
