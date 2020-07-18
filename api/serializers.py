@@ -35,29 +35,32 @@ class FastaEntrySerializer(serializers.ModelSerializer):
         return fastaNew
 
     def validate(self, data):
-
+        
         print("entre aca")
         path = default_storage.save(
             'tmp/{}'.format(data['fasta_file'].name), data['fasta_file'])
         tmp_file = os.path.join(settings.MEDIA_ROOT, path)
-
-        result = generateAlignamient(tmp_file)
-        if(result.isValid):
-            print(result)
-            print(result.newicktree)
-            data['alignament_file']= result.alignroute
-            data['newick_tree'] = result.newicktree
-            arrayResult ={ 
-                'data': data,
-                'sequences': result.sequences
-            }
-            os.remove(tmp_file)
-            return arrayResult
+        if (checkFastaFile(tmp_file)):
+            result = generateAlignamient(tmp_file)
+            if(result.isValid):
+                print(result)
+                print(result.newicktree)
+                data['alignament_file']= result.alignroute
+                data['newick_tree'] = result.newicktree
+                arrayResult ={ 
+                    'data': data,
+                    'sequences': result.sequences
+                }
+                os.remove(tmp_file)
+                return arrayResult
+            else:
+                os.remove(tmp_file)
+                raise ValidationError(
+                    'Error al validar archivo fasta: {}'.format(result.message))
         else:
             os.remove(tmp_file)
             raise ValidationError(
-                'Error al validar archivo fasta: {}'.format(result.message))
-
+                    'No es un archivo de formato fasta es un {}'.format(returnFormatFile(tmp_file)))   
     class Meta:
         model = FastaEntry
         fields = ['id', 'nombre', 'created', 'fasta_file', 'alignament_file','newick_tree','sequences']
