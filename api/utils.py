@@ -2,7 +2,7 @@ from Bio import SeqIO, AlignIO
 from Bio.Align.Applications import ClustalwCommandline
 from .fastaResult import FastaResult
 from .fastaSequence import FastaSequence
-import os,decimal,subprocess
+import os,decimal,subprocess,string
 from django.conf import settings
 
 def readSequence(pathFasta):
@@ -12,8 +12,14 @@ def readSequence(pathFasta):
         with open(pathFasta) as out_file:
             count_sequences=0
             for fasta in fasta_sequences:
-                name, sequence = fasta.id, str(fasta.seq)
+                name, sequence = fasta.description, str(fasta.seq)
                 
+                if(contains_whitespace(name)):
+                    result.isValid = False
+                    result.message = "En el header de la secuencia {} hay un espacio en blanco,por favor correjirlo".format(str(count_sequences))
+                    break
+                
+
                 if( result.isValid ):
                     validSequence = True
                 # con esto valido que todos los caracteres de la secuencia esten dentro de los permitidos, sino lo marco invalido
@@ -108,6 +114,8 @@ def getID(header) :
     aux = header.split(sep='|')
     return aux[3]
 
+def contains_whitespace(s):
+    return True in [c in s for c in string.whitespace]
 
 def is_valid_lon(lon):
     try:
