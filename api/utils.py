@@ -5,13 +5,16 @@ from .fastaSequence import FastaSequence
 import os,decimal,subprocess,string
 from django.conf import settings
 
-def readSequence(pathFasta):
-        valid_characters = ['-', 'A', 'C', 'G', 'T']
-        fasta_sequences = SeqIO.parse(open(pathFasta), 'fasta')
-        result = FastaResult(False,True, 0, [], "OK","","")
-        with open(pathFasta) as out_file:
-            count_sequences=0
-            for fasta in fasta_sequences:
+
+def readAndCheckFasta(pathFasta):
+    valid_characters = ['-', 'A', 'C', 'G', 'T']
+    fasta_sequences = SeqIO.parse(open(pathFasta), 'fasta')
+    result = FastaResult(False,True, 0, [], "OK","","")
+    with open(pathFasta) as out_file:
+        count_sequences=0
+            
+        for fasta in fasta_sequences:
+
                 name, sequence = fasta.description, str(fasta.seq)
                 
                 if(contains_whitespace(name)):
@@ -34,33 +37,98 @@ def readSequence(pathFasta):
                 # si detecto que dentro de la secuencia hay un '-' asumo que esta alineado. Con encontrar uno, ya no lo vuelvo a evaluar
                 if( not result.isAlign and "-" in sequence ):
                     result.isAlign = True
-            
-                 # instancio un FastaSequence con su header y body respectivamente 
+
+                # instancio un FastaSequence con su header y body respectivamente 
                 sequ = FastaSequence(name, sequence)
                  # agrego el FastaSequence a la lista del FastaResult
                 result.sequences.append(sequ)
                 print(sequ.header)
                 print(sequ.body)
         result.cantSymbols= len(result.sequences)
-        if(result.cantSymbols < 5 and result.isValid):
+        if(result.cantSymbols < 5 and result.isValid and not result.isAlign):
             result.isValid = False
             result.message = "El archivo tiene {} secuencias y necesita al menos 5 para poder generar el arbol".format(str(count_sequences))
             
         if(os.path.splitext(pathFasta)[1] != ".fasta"):  
             result.isValid = False
-            result.message = "El archivo no es formato .fasta"      
-    
+            result.message = "El archivo no es formato .fasta"
+            
         print(result.isValid)
 
+        return result           
+
+def readAndCheckAln(pathAln):
+    valid_characters = ['-','A', 'C', 'G', 'T']
+    aln_sequences = list(AlignIO.read(open(pathAln), 'clustal'))
+    result = FastaResult(True,True, 0, [], "OK","","")
+    with open(pathAln) as out_aln:
+            
+        for i in range(len(aln_sequences)):
+            print(i)
+            alnAux=aln_sequences[i]           
+            count_sequences=0
+            import pdb; pdb.set_trace()           
+            name, sequence = alnAux.description, str(alnAux.seq)
+            print(name)                       
+            if(contains_whitespace(name)):
+             result.isValid = False
+             result.message = "En el header de la secuencia {} hay un espacio en blanco,por favor correjirlo".format(str(count_sequences))
+             break
+            if( result.isValid ):
+                validSequence = True
+                # con esto valido que todos los caracteres de la secuencia esten dentro de los permitidos, sino lo marco invalido
+                for char in sequence:
+                    validSequence = validSequence and char in valid_characters
+                
+                count_sequences= count_sequences + 1  
+                
+                if(not validSequence):
+                    result.isValid = False
+                    result.message = "El archivo esta corrupto, encontramos dentro de las secuencias elementos que no son nucleótidos"
+                    break        
+                # instancio un FastaSequence con su header y body respectivamente 
+                sequ = FastaSequence(name, sequence)
+                 # agrego el FastaSequence a la lista del FastaResult
+                result.sequences.append(sequ)
+                print(sequ.header)
+                print(sequ.body)
+        result.cantSymbols= len(result.sequences)
+        if(result.cantSymbols < 5 and result.isValid and not result.isAlign):
+            result.isValid = False
+            result.message = "El archivo tiene {} secuencias y necesita al menos 5 para poder generar el arbol".format(str(count_sequences))
+            
+        if(os.path.splitext(pathAln)[1] != ".fasta"):  
+            result.isValid = False
+            result.message = "El archivo no es formato .fasta"
+            
+        print(result.isValid)
+
+        return result           
+
+def readSequence(pathFasta):
+    result = FastaResult(False,False, 0, [], "El archivo no corresponde a un formato valido para el programa","","")
+    try:
+        fasta_sequences = list(SeqIO.parse(open(pathFasta), 'fasta'))
+        print('estoy saliendo por excepcion')
+        if(len(fasta_sequences) > 0):
+            return readAndCheckFasta(pathFasta)
+        else:
+            aln_sequences = list(AlignIO.parse(open(pathFasta), 'clustal'))
+            print('estoy entrando aca')
+            return readAndCheckAln(pathFasta)
+        
+    except Exception as e:
+        print('El archivo tiene extension .fasta pero el contenido no corresponde ')
         return result
-    
+
 def checkFastaFile(path):
     return (os.path.splitext(path)[1] == ".fasta")
 
 def returnFormatFile(path):    
     return (os.path.splitext(path)[1])
 
-def generateAlignamient(pathFasta):
+
+def generateAlignamient(pathFasta,numBootstrap):
         # Hago un reverse del path,entonces no deberia importar cuantas subcarpetas haya antes
         auxPath= pathFasta.split(sep='/')
         auxPath.reverse()
