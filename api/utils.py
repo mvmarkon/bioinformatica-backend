@@ -128,7 +128,7 @@ def returnFormatFile(path):
     return (os.path.splitext(path)[1])
 
 
-def generateAlignamient(pathFasta,numBootstrap):
+def generateAlignamient(pathFasta):
         # Hago un reverse del path,entonces no deberia importar cuantas subcarpetas haya antes
         auxPath= pathFasta.split(sep='/')
         auxPath.reverse()
@@ -165,9 +165,9 @@ def convertPathFastaTOAln(path):
       newpath  = os.path.splitext(path)[0]+".aln"
       return newpath    
 
-def getNameHeader(header) :
-    aux = header.split(sep='|')
-    return aux[0]
+# def getNameHeader(header) :
+#     aux = header.split(sep='|')
+#     return aux[0]
 
 def getLatitud(header):
     aux = header.split(sep='|')
@@ -180,7 +180,7 @@ def getLongitud(header):
 
 def getID(header) :
     aux = header.split(sep='|')
-    return aux[3]
+    return aux[0]
 
 def contains_whitespace(s):
     return True in [c in s for c in string.whitespace]
