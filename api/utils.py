@@ -66,8 +66,7 @@ def readAndCheckAln(pathAln):
         for i in range(len(aln_sequences)):
             print(i)
             alnAux=aln_sequences[i]           
-            count_sequences=0
-            import pdb; pdb.set_trace()           
+            count_sequences=0           
             name, sequence = alnAux.description, str(alnAux.seq)
             print(name)                       
             if(contains_whitespace(name)):
