@@ -25,8 +25,8 @@
 		`python manage.py runserver`   
 
 ##  Como crear Usuario para admin de Python 
-- Crear un superusuario para el admin:
-	   python manage.py createsuperuser
+- Crear un superusuario para el admin:  
+	   `python manage.py createsuperuser`
 
 ## Este proyecto necesita el siguiente repositorio para poder funcionar:
 [Proyecto de Frontend](https://github.com/mverdecanna/bioinformatica-frontend)	
