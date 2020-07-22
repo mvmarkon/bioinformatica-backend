@@ -10,9 +10,9 @@
 - Entrar a la carpeta generada al clonar el proyecto:  
 	`cd bioinformatica-backend`
 - Crear ambiente virtual con conda :  
-	   `conda create --name <nombre de env>`
+	   `conda create --name back`
 - Activar el entorno virtual:  
-	   `conda activate <nombre de env>`      
+	   `conda activate back`      
 - Instalar python en el entorno virtual:  
 	  `conda install python=3.7.6`	
 - Actualizar con las librerias el enviroment de conda   
