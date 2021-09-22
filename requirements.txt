@@ -4,7 +4,7 @@ astroid==2.4.2
 biopython==1.77
 certifi==2020.4.5.1
 distlib==0.3.0
-Django==3.0.7
+Django==3.1.13
 django-cors-headers==3.4.0
 djangorestframework==3.11.0
 ete3 @ file:///home/conda/feedstock_root/build_artifacts/ete3_1589460166306/work
